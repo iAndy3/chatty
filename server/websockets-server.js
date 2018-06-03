@@ -1,31 +1,37 @@
-const WebSocket = require('ws').Server;
+const WebSocket = require('ws').Server,
+	_ = require('lodash');
+
 const wss = new WebSocket({ port: 8088 });
-const {people} = require('./mock-data');
+const {sendPrivateMessage, noticeAllClients} = require('./utils/tools');
 
-const noticeAllClients = message => wss.clients.forEach(client => client.send(JSON.stringify(message)));
-
-
+let allPeople = [],
+	clients = {},
+	currentPlayer = {};
 
 wss.on('connection', ws => {
-	//ws.send(JSON.stringify({type: 'GET_ME', payload: newPlayer}));
-
-	ws.on('close', () => {
-
-	});
-
 	ws.on('message', message => {
 		const {type, payload} = JSON.parse(message);
 
 		switch(type) {
 			case 'CONNECTED':
-				noticeAllClients({type: 'GET_PEOPLE', payload: [...people, {username: payload, uid: 352}]});
-
+				currentPlayer = {
+					uid: _.uniqueId('player_'),
+					username: payload
+				}
+				clients[currentPlayer.uid] = ws;
+				allPeople.push(currentPlayer);
+				noticeAllClients(wss, {type: 'GET_PEOPLE', payload: allPeople});
 				break;
-			case 'RESET_PLAYERS':
-
+			case 'PRIVATE_MESSAGE':
+				clients.hasOwnProperty(payload.to) && sendPrivateMessage(clients[payload.to], {type: 'NEW_MESSAGE', payload});
 				break;
 			default:
 		}
+	});
+	
+	ws.on('close', () => {
+		allPeople = allPeople.filter(person => person.uid !== currentPlayer.uid);
+		noticeAllClients(wss, {type: 'GET_PEOPLE', payload: allPeople});
 	});
 });
 
