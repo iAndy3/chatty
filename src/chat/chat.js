@@ -7,13 +7,8 @@ export default class Chat extends React.Component {
 	constructor(props) {
 		super(props);
 
-		this.state = {
-			chatWith: ''
-		};
-
 		this.socket = socket.getInstance();
-		this.focusPerson = this.focusPerson.bind(this);
-		this.sendMessage = this.sendMessage.bind(this);
+		this.exposePeopleApi = this.exposePeopleApi.bind(this);
 	}
 
 	componentDidMount() {
@@ -23,22 +18,15 @@ export default class Chat extends React.Component {
 		});
 	}
 
-	focusPerson(chatWith) {
-		this.setState({chatWith});
-	}
-
-	sendMessage() {
-		this.socket.send(JSON.stringify({type: 'PRIVATE_MESSAGE', payload: {
-			to: this.state.chatWith, 
-			message: 'Salutare'
-		}}));
+	exposePeopleApi(api) {
+		this.peopleApi = api;
 	}
 
 	render() {
 		return (
 			<div className="chat-dashboard">
-				<People {...this.props} focus={this.focusPerson}/>
-				<button onClick={this.sendMessage}>Send</button>
+				<People {...this.props} exposeApi={this.exposePeopleApi} focus={this.focusPerson}/>
+				<button onClick={() => this.peopleApi.sendMessage('tanga')}>Send</button>
 			</div>
 		)
 	}

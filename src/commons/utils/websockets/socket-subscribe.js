@@ -5,8 +5,6 @@ let subscribers = {};
 
 sw.onmessage = ({data}) => {
 	const parsedData = typeof data === 'string' ? JSON.parse(data) : data;
-	console.log("parsedData", parsedData);
-	console.log("subscribers", subscribers);
 
 	if(parsedData.type) {
 		const msgType = subscribers[parsedData.type];
