@@ -1,0 +1,41 @@
+import socket from './socket';
+
+const sw = socket.getInstance();
+let subscribers = {};
+
+sw.onmessage = ({data}) => {
+	const parsedData = typeof data === 'string' ? JSON.parse(data) : data;
+	console.log("parsedData", parsedData);
+	console.log("subscribers", subscribers);
+
+	if(parsedData.type) {
+		const msgType = subscribers[parsedData.type];
+
+		if(msgType) {
+			Object.keys(msgType).forEach(item => msgType[item](parsedData.payload));
+		}
+	}
+}
+
+const subscribe = (id, options = {}) => {
+	if(!id || !Object.keys(options).length) return;
+	const defaultCb = () => {};
+
+	Object.keys(options).forEach(subscription => {
+		subscribers[subscription] = Object.assign({}, subscribers[subscription], {
+			[id]: options[subscription] || defaultCb
+		})
+	});
+};
+const unsubscribe = (type, id) => {
+	const subscriber = subscribers[type];
+
+	if(subscriber) {
+		delete subscriber[id];
+	}
+}
+
+export default {
+	subscribe,
+	unsubscribe
+};

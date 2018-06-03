@@ -1,0 +1,17 @@
+.set-username {
+	width: 400px;
+	margin: 100px auto;
+	border: 1px solid #eee;
+	border-radius: 5px;
+	padding: 15px;
+	display: flex;
+	flex-direction: column;
+
+	.pick-username,
+	> input,
+	> button {
+		font-size: 25px;
+		padding: 5px 10px;
+		margin: 5px;
+	}
+}

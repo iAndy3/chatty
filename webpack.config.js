@@ -9,6 +9,9 @@ module.exports = {
 		path: path.resolve(__dirname, 'dist'),
 		filename: 'script.js'
 	},
+	devServer: {
+		port: 8000
+	},
 	module: {
 		rules: [{
 			test: /\.js$/,
