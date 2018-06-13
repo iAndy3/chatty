@@ -15,7 +15,6 @@ const socket = (function() {
 
 	return {
 		getInstance: function() {
-			console.log("getInstance");
 			if(!instance) {
 				instance = createInstance();
 			}

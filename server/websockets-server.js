@@ -20,6 +20,8 @@ wss.on('connection', ws => {
 				}
 				clients[currentPlayer.uid] = ws;
 				allPeople.push(currentPlayer);
+
+				sendPrivateMessage(ws, {type: 'GET_ME', payload: currentPlayer});
 				noticeAllClients(wss, {type: 'GET_PEOPLE', payload: allPeople});
 				break;
 			case 'PRIVATE_MESSAGE':
